@@ -81,7 +81,7 @@ public class CThingRepoExtensionTest {
         assertThat(extension.getSiteUrl()).isEqualTo(siteUrl);
 
         final ProjectVersion version = new ProjectVersion("1.2.3", BuildType.snapshot);
-        project.setVersion(new ProjectVersion("1.2.3", BuildType.release));
+        project.setVersion(version);
         if (version.isSnapshotBuild()) {
             assertThat(extension.getRepoUrl()).isEqualTo(snapshotsUrl);
         } else {
