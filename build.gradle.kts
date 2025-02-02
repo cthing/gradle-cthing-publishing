@@ -46,7 +46,8 @@ gradlePlugin {
         create("cthingPublishingPlugin") {
             id = "org.cthing.cthing-publishing"
             displayName = "C Thing Software versioning plugin"
-            description = "A Gradle plugin that provides support for the publishing of C Thing Software artifacts."
+            description = "A Gradle plugin that provides support for the publishing of C Thing Software artifacts. " +
+                    "This plugin is applicable only to C Thing Software projects."
             tags = listOf("publishing")
             implementationClass = "org.cthing.gradle.plugins.publishing.PublishingPlugin"
         }
