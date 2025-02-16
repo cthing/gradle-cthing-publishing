@@ -28,7 +28,7 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-version = ProjectVersion("1.0.1", BuildType.snapshot)
+version = ProjectVersion("1.1.0", BuildType.snapshot)
 group = "org.cthing"
 description = "A Gradle plugin that provides support for the publishing of C Thing Software artifacts."
 
@@ -61,6 +61,7 @@ dependencies {
 
     testImplementation(libs.assertJ)
     testImplementation(libs.commonsIO)
+    testImplementation(libs.equalsVerifier)
     testImplementation(libs.junitApi)
     testImplementation(libs.junitParams)
     testImplementation(libs.mockito)

@@ -545,6 +545,58 @@ public class CThingPomActionTest {
     }
 
     @Test
+    public void testWithoutDevelopers() {
+        final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
+                                                           this.extension::findCThingGradlePlugins);
+        action.setDevelopers(Set.of());
+        assertThat(action.getDevelopers()).isEmpty();
+
+        final TestPom pom = new TestPom(this.project);
+        action.execute(pom);
+
+        assertThat(pom.developers.developers).isEmpty();
+    }
+
+    @Test
+    public void testWithDevelopers() {
+        final PomDeveloper developer = new PomDeveloper("a", "b", "c");
+        final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
+                                                           this.extension::findCThingGradlePlugins);
+        action.setDevelopers(Set.of(developer));
+        assertThat(action.getDevelopers()).containsExactly(developer);
+
+        final TestPom pom = new TestPom(this.project);
+        action.execute(pom);
+
+        assertThat(pom.developers.developers).satisfiesExactly(first -> {
+            assertThat(first.getId().get()).isEqualTo("a");
+            assertThat(first.getName().get()).isEqualTo("b");
+            assertThat(first.getEmail().get()).isEqualTo("c");
+        });
+    }
+
+    @Test
+    public void testWithAddedDevelopers() {
+        final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
+                                                           this.extension::findCThingGradlePlugins);
+        action.addDeveloper(new PomDeveloper("a", "b", "c"));
+        assertThat(action.getDevelopers()).hasSize(2);
+
+        final TestPom pom = new TestPom(this.project);
+        action.execute(pom);
+
+        assertThat(pom.developers.developers).satisfiesExactly(first -> {
+            assertThat(first.getId().get()).isEqualTo("a");
+            assertThat(first.getName().get()).isEqualTo("b");
+            assertThat(first.getEmail().get()).isEqualTo("c");
+        }, second -> {
+            assertThat(second.getId().get()).isEqualTo("baron");
+            assertThat(second.getName().get()).isEqualTo("Baron Roberts");
+            assertThat(second.getEmail().get()).isEqualTo("baron@cthing.com");
+        });
+    }
+
+    @Test
     public void testWithPlugins() {
         final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
                                                            this.extension::findCThingGradlePlugins);

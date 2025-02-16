@@ -5,7 +5,10 @@
 
 package org.cthing.gradle.plugins.publishing;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Supplier;
 
 import org.cthing.projectversion.ProjectVersion;
@@ -29,6 +32,7 @@ public class CThingPomAction implements Action<MavenPom> {
     private String user;
     private PomLicense license;
     private PomCISystem ciSystem;
+    private final Set<PomDeveloper> developers;
 
     public CThingPomAction(final Project project, final Supplier<Set<String>> findCThingDependencies,
                            final Supplier<Set<String>> findCThingGradlePlugins) {
@@ -38,6 +42,10 @@ public class CThingPomAction implements Action<MavenPom> {
         this.user = "cthing";
         this.license = PomLicense.ASL2;
         this.ciSystem = PomCISystem.GitHubActions;
+        this.developers = new TreeSet<>(Comparator.comparing(PomDeveloper::getId));
+
+        final PomDeveloper developer = new PomDeveloper("baron", "Baron Roberts", "baron@cthing.com");
+        this.developers.add(developer);
     }
 
     /**
@@ -100,6 +108,38 @@ public class CThingPomAction implements Action<MavenPom> {
         return this;
     }
 
+    /**
+     * Obtains the project developers.
+     *
+     * @return Project developers. If there are no developers listed, an empty set is returned.
+     */
+    public Set<PomDeveloper> getDevelopers() {
+        return Collections.unmodifiableSet(this.developers);
+    }
+
+    /**
+     * Sets the project developers.
+     *
+     * @param developers Project developers. Specify the empty set to clear the list of developers.
+     * @return This action
+     */
+    public CThingPomAction setDevelopers(final Set<PomDeveloper> developers) {
+        this.developers.clear();
+        this.developers.addAll(developers);
+        return this;
+    }
+
+    /**
+     * Adds a project developer to the existing set of developers.
+     *
+     * @param developer Project developer to add
+     * @return This action
+     */
+    public CThingPomAction addDeveloper(final PomDeveloper developer) {
+        this.developers.add(developer);
+        return this;
+    }
+
     @Override
     public void execute(final MavenPom mavenPom) {
         final String githubUrl = GITHUB_BASE_URL + "/" + this.user + "/" + this.project.getName();
@@ -118,13 +158,17 @@ public class CThingPomAction implements Action<MavenPom> {
             license.getUrl().convention(this.license.getUrl());
         }));
 
-        mavenPom.developers(developers -> developers.developer(developer -> {
-            developer.getId().convention("baron");
-            developer.getName().convention("Baron Roberts");
-            developer.getEmail().convention("baron@cthing.com");
-            developer.getOrganization().convention(ORGANIZATION_NAME);
-            developer.getOrganizationUrl().convention(ORGANIZATION_URL);
-        }));
+        mavenPom.developers(mavenDevelopers -> {
+            for (PomDeveloper developer : this.developers) {
+                mavenDevelopers.developer(mavenDeveloper -> {
+                    mavenDeveloper.getId().set(developer.getId());
+                    mavenDeveloper.getName().set(developer.getName());
+                    mavenDeveloper.getEmail().set(developer.getEmail());
+                    mavenDeveloper.getOrganization().convention(ORGANIZATION_NAME);
+                    mavenDeveloper.getOrganizationUrl().convention(ORGANIZATION_URL);
+                });
+            }
+        });
 
         mavenPom.scm(scm -> {
             scm.getConnection().convention("scm:git:" + githubUrl + ".git");
