@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Developers can now be added and replaced
+- The POM `scm` section is now populated directly from the `remoteUrl` in the
+  `.git/config` file
+
+### Removed
+
+- The `CThingPomAction.user` property is no longer needed and has been removed 
 
 ## [1.0.0] - 2025-02-01
 

@@ -28,7 +28,7 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-version = ProjectVersion("1.1.0", BuildType.snapshot)
+version = ProjectVersion("2.0.0", BuildType.snapshot)
 group = "org.cthing"
 description = "A Gradle plugin that provides support for the publishing of C Thing Software artifacts."
 

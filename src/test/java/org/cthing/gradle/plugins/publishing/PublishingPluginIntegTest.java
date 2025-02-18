@@ -59,6 +59,25 @@ public class PublishingPluginIntegTest {
     @BeforeEach
     public void setup() throws IOException {
         this.projectDir = Files.createTempDirectory(BASE_DIR, "project");
+
+        Files.createDirectories(this.projectDir.resolve(".git"));
+        Files.writeString(this.projectDir.resolve(".git/config"),
+                          """
+                          [core]
+                              repositoryformatversion = 0
+                              filemode = true
+                              bare = false
+                              logallrefupdates = true
+                          [remote "origin"]
+                              url = git@github.com:cthing/hello.git
+                              fetch = +refs/heads/*:refs/remotes/origin/*
+                          [branch "master"]
+                              remote = origin
+                              merge = refs/heads/master
+                          [gui]
+                              wmstate = normal
+                              geometry = 2050x1149+28+58 804 393
+                          """);
     }
 
     @ParameterizedTest
@@ -89,8 +108,8 @@ public class PublishingPluginIntegTest {
         assertThat(xpath.evaluate("/project/developers/developer/email", doc)).isEqualTo("baron@cthing.com");
         assertThat(xpath.evaluate("/project/developers/developer/organization", doc)).isEqualTo("C Thing Software");
         assertThat(xpath.evaluate("/project/developers/developer/organizationUrl", doc)).isEqualTo("https://www.cthing.com");
-        assertThat(xpath.evaluate("/project/scm/connection", doc)).isEqualTo("scm:git:https://github.com/cthing/hello.git");
-        assertThat(xpath.evaluate("/project/scm/developerConnection", doc)).isEqualTo("scm:git:git@github.com:cthing/hello.git");
+        assertThat(xpath.evaluate("/project/scm/connection", doc)).isEqualTo("scm:git:git://github.com/cthing/hello.git");
+        assertThat(xpath.evaluate("/project/scm/developerConnection", doc)).isEqualTo("scm:git:ssh://git@github.com/cthing/hello.git");
         assertThat(xpath.evaluate("/project/scm/url", doc)).isEqualTo("https://github.com/cthing/hello");
         assertThat(xpath.evaluate("/project/issueManagement/system", doc)).isEqualTo("GitHub Issues");
         assertThat(xpath.evaluate("/project/issueManagement/url", doc)).isEqualTo("https://github.com/cthing/hello/issues");

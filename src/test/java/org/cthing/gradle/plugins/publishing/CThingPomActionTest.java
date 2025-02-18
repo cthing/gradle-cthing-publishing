@@ -5,6 +5,9 @@
 
 package org.cthing.gradle.plugins.publishing;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +34,7 @@ import org.gradle.api.publish.maven.MavenPomMailingListSpec;
 import org.gradle.api.publish.maven.MavenPomOrganization;
 import org.gradle.api.publish.maven.MavenPomScm;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -397,8 +401,34 @@ public class CThingPomActionTest {
         }
     }
 
-    private final Project project = ProjectBuilder.builder().build();
-    private final CThingPublishingExtension extension = mock(CThingPublishingExtension.class);
+    private Project project;
+    private CThingPublishingExtension extension;
+
+    @BeforeEach
+    public void setup() throws IOException {
+        this.project = ProjectBuilder.builder().build();
+        this.extension = mock(CThingPublishingExtension.class);
+
+        final Path projectDir = this.project.getProjectDir().toPath();
+        Files.createDirectories(projectDir.resolve(".git"));
+        Files.writeString(projectDir.resolve(".git/config"),
+                          """
+                          [core]
+                              repositoryformatversion = 0
+                              filemode = true
+                              bare = false
+                              logallrefupdates = true
+                          [remote "origin"]
+                              url = git@github.com:cthing/test.git
+                              fetch = +refs/heads/*:refs/remotes/origin/*
+                          [branch "master"]
+                              remote = origin
+                              merge = refs/heads/master
+                          [gui]
+                              wmstate = normal
+                              geometry = 2050x1149+28+58 804 393
+                          """);
+    }
 
     @Test
     public void testMinimumMetadata() {
@@ -428,8 +458,8 @@ public class CThingPomActionTest {
             assertThat(developer.getOrganizationUrl().getOrNull()).isEqualTo("https://www.cthing.com");
         }, atIndex(0));
         assertThat(pom.scm).satisfies(scm -> {
-            assertThat(scm.getConnection().getOrNull()).isEqualTo("scm:git:https://github.com/cthing/test.git");
-            assertThat(scm.getDeveloperConnection().getOrNull()).isEqualTo("scm:git:git@github.com:cthing/test.git");
+            assertThat(scm.getConnection().getOrNull()).isEqualTo("scm:git:git://github.com/cthing/test.git");
+            assertThat(scm.getDeveloperConnection().getOrNull()).isEqualTo("scm:git:ssh://git@github.com/cthing/test.git");
             assertThat(scm.getUrl().getOrNull()).isEqualTo("https://github.com/cthing/test");
         });
         assertThat(pom.issueManagement).satisfies(issueManagement -> {
@@ -468,32 +498,6 @@ public class CThingPomActionTest {
         action.execute(pom);
 
         assertThat(pom.getDescription().getOrNull()).isEqualTo("Hello world");
-    }
-
-    @Test
-    public void testWithUser() {
-        final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
-                                                           this.extension::findCThingGradlePlugins);
-        action.setUser("joe");
-        assertThat(action.getUser()).isEqualTo("joe");
-
-
-        final TestPom pom = new TestPom(this.project);
-        action.execute(pom);
-
-        assertThat(pom.scm).satisfies(scm -> {
-            assertThat(scm.getConnection().getOrNull()).isEqualTo("scm:git:https://github.com/joe/test.git");
-            assertThat(scm.getDeveloperConnection().getOrNull()).isEqualTo("scm:git:git@github.com:joe/test.git");
-            assertThat(scm.getUrl().getOrNull()).isEqualTo("https://github.com/joe/test");
-        });
-        assertThat(pom.issueManagement).satisfies(issueManagement -> {
-            assertThat(issueManagement.getUrl().getOrNull()).isEqualTo("https://github.com/joe/test/issues");
-            assertThat(issueManagement.getSystem().getOrNull()).isEqualTo("GitHub Issues");
-        });
-        assertThat(pom.ciManagement).satisfies(ciManagement -> {
-            assertThat(ciManagement.getUrl().getOrNull()).isEqualTo("https://github.com/joe/test/actions");
-            assertThat(ciManagement.getSystem().getOrNull()).isEqualTo("GitHub Actions");
-        });
     }
 
     @Test

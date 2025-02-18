@@ -24,12 +24,10 @@ public class CThingPomAction implements Action<MavenPom> {
 
     private static final String ORGANIZATION_NAME = "C Thing Software";
     private static final String ORGANIZATION_URL = "https://www.cthing.com";
-    private static final String GITHUB_BASE_URL = "https://github.com";
 
     private final Project project;
     private final Supplier<Set<String>> findCThingDependencies;
     private final Supplier<Set<String>> findCThingGradlePlugins;
-    private String user;
     private PomLicense license;
     private PomCISystem ciSystem;
     private final Set<PomDeveloper> developers;
@@ -39,33 +37,12 @@ public class CThingPomAction implements Action<MavenPom> {
         this.project = project;
         this.findCThingDependencies = findCThingDependencies;
         this.findCThingGradlePlugins = findCThingGradlePlugins;
-        this.user = "cthing";
         this.license = PomLicense.ASL2;
         this.ciSystem = PomCISystem.GitHubActions;
         this.developers = new TreeSet<>(Comparator.comparing(PomDeveloper::getId));
 
         final PomDeveloper developer = new PomDeveloper("baron", "Baron Roberts", "baron@cthing.com");
         this.developers.add(developer);
-    }
-
-    /**
-     * Obtains the source code repository username for the project (e.g. the GitHub user for the project).
-     *
-     * @return Source code repository username.
-     */
-    public String getUser() {
-        return this.user;
-    }
-
-    /**
-     * Sets the source code repository username for the project (e.g. the GitHub user for the project).
-     *
-     * @param user Source code repository username for the project
-     * @return This action
-     */
-    public CThingPomAction setUser(final String user) {
-        this.user = user;
-        return this;
     }
 
     /**
@@ -142,11 +119,11 @@ public class CThingPomAction implements Action<MavenPom> {
 
     @Override
     public void execute(final MavenPom mavenPom) {
-        final String githubUrl = GITHUB_BASE_URL + "/" + this.user + "/" + this.project.getName();
+        final PomScm scmUrls = new PomScm(this.project);
 
         mavenPom.getName().convention(this.project.getName());
         mavenPom.getDescription().convention(this.project.getDescription());
-        mavenPom.getUrl().convention(githubUrl);
+        mavenPom.getUrl().convention(scmUrls.getBrowse());
 
         mavenPom.organization(organization -> {
             organization.getName().convention(ORGANIZATION_NAME);
@@ -170,23 +147,26 @@ public class CThingPomAction implements Action<MavenPom> {
             }
         });
 
-        mavenPom.scm(scm -> {
-            scm.getConnection().convention("scm:git:" + githubUrl + ".git");
-            scm.getDeveloperConnection().convention("scm:git:git@github.com:" + this.user + "/"
-                                                            + this.project.getName() + ".git");
-            scm.getUrl().convention(githubUrl);
-        });
+        if (scmUrls.isPresent()) {
+            mavenPom.scm(scm -> {
+                scm.getConnection().convention(scmUrls.getReadOnly());
+                scm.getDeveloperConnection().convention(scmUrls.getReadWrite());
+                scm.getUrl().convention(scmUrls.getBrowse());
+            });
 
-        mavenPom.issueManagement(issues -> {
-            issues.getSystem().convention("GitHub Issues");
-            issues.getUrl().convention(githubUrl + "/issues");
-        });
+            mavenPom.issueManagement(issues -> {
+                issues.getSystem().convention("GitHub Issues");
+                issues.getUrl().convention(scmUrls.getBrowse().map(url -> url + "/issues"));
+            });
+        }
 
         if (this.ciSystem == PomCISystem.GitHubActions) {
-            mavenPom.ciManagement(ciManagement -> {
-                ciManagement.getUrl().convention(githubUrl + "/actions");
-                ciManagement.getSystem().convention("GitHub Actions");
-            });
+            if (scmUrls.isPresent()) {
+                mavenPom.ciManagement(ciManagement -> {
+                    ciManagement.getUrl().convention(scmUrls.getBrowse().map(url -> url + "/actions"));
+                    ciManagement.getSystem().convention("GitHub Actions");
+                });
+            }
         } else if (this.ciSystem == PomCISystem.CThingJenkins) {
             mavenPom.ciManagement(ciManagement -> ciManagement.getSystem().convention(ORGANIZATION_NAME + " Jenkins"));
         }
