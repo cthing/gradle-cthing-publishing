@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [2.0.0] - 2025-02-18
+
 ### Added
 
 - Developers can now be added and replaced
@@ -23,5 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release
 
-[unreleased]: https://github.com/cthing/gradle-cthing-publishing/compare/1.0.0...HEAD
+[unreleased]: https://github.com/cthing/gradle-cthing-publishing/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/cthing/gradle-cthing-publishing/releases/tag/2.0.0
 [1.0.0]: https://github.com/cthing/gradle-cthing-publishing/releases/tag/1.0.0
