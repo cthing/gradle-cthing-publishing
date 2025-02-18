@@ -42,9 +42,6 @@ public class CThingRepoExtension {
     /** Property providing the URL to publish snapshot Debian packages. */
     public static final String APT_SNAPSHOTS_URL_PROPERTY = "cthing.nexus.aptSnapshotsUrl";
 
-    /** Property providing the URL to publish a Maven site. */
-    public static final String SITE_URL_PROPERTY = "cthing.nexus.sitesUrl";
-
     private final Project project;
 
     public CThingRepoExtension(final Project project) {
@@ -162,15 +159,5 @@ public class CThingRepoExtension {
     @Nullable
     public String getAptSnapshotsUrl() {
         return (String)this.project.findProperty(APT_SNAPSHOTS_URL_PROPERTY);
-    }
-
-    /**
-     * Obtains the URL to publish a Maven site.
-     *
-     * @return URL to publish a Maven site.
-     */
-    @Nullable
-    public String getSiteUrl() {
-        return (String)this.project.findProperty(SITE_URL_PROPERTY);
     }
 }

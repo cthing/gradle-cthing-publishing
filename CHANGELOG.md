@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Removed
+
+- Site URL has been removed because C Thing Software project no longer generate
+  a project site.
+
 ## [2.0.0] - 2025-02-18
 
 ### Added

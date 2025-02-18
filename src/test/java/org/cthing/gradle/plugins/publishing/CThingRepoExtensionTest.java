@@ -37,7 +37,6 @@ public class CThingRepoExtensionTest {
         assertThat(extension.getAptReleasesUrl()).isNull();
         assertThat(extension.getAptCandidatesUrl()).isNull();
         assertThat(extension.getAptSnapshotsUrl()).isNull();
-        assertThat(extension.getSiteUrl()).isNull();
     }
 
     @Test
@@ -55,7 +54,6 @@ public class CThingRepoExtensionTest {
         final String aptReleasesUrl = "https://github.com/cthing/apt/releases";
         final String aptCandidatesUrl = "https://github.com/cthing/apt/candidates";
         final String aptSnapshotsUrl = "https://github.com/cthing/apt/snapshots";
-        final String siteUrl = "https://github.com/cthing/site";
 
         properties.set(CThingRepoExtension.USER_PROPERTY, user);
         properties.set(CThingRepoExtension.PASSWORD_PROPERTY, password);
@@ -66,7 +64,6 @@ public class CThingRepoExtensionTest {
         properties.set(CThingRepoExtension.APT_RELEASES_URL_PROPERTY, aptReleasesUrl);
         properties.set(CThingRepoExtension.APT_CANDIDATES_URL_PROPERTY, aptCandidatesUrl);
         properties.set(CThingRepoExtension.APT_SNAPSHOTS_URL_PROPERTY, aptSnapshotsUrl);
-        properties.set(CThingRepoExtension.SITE_URL_PROPERTY, siteUrl);
 
         assertThat(extension.getUser()).isEqualTo(user);
         assertThat(extension.getPassword()).isEqualTo(password);
@@ -78,7 +75,6 @@ public class CThingRepoExtensionTest {
         assertThat(extension.getAptReleasesUrl()).isEqualTo(aptReleasesUrl);
         assertThat(extension.getAptCandidatesUrl()).isEqualTo(aptCandidatesUrl);
         assertThat(extension.getAptSnapshotsUrl()).isEqualTo(aptSnapshotsUrl);
-        assertThat(extension.getSiteUrl()).isEqualTo(siteUrl);
 
         final ProjectVersion version = new ProjectVersion("1.2.3", BuildType.snapshot);
         project.setVersion(version);
