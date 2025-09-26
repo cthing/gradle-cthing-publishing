@@ -25,6 +25,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension;
 import org.gradle.plugin.devel.PluginDeclaration;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -201,7 +202,7 @@ public class CThingPublishingExtensionTest {
 
     @Test
     @DisplayName("Project creates plugins")
-    @SuppressWarnings({ "DataFlowIssue", "unchecked" })
+    @SuppressWarnings("unchecked")
     public void testFindCThingGradlePlugins3() {
         final PluginDeclaration plugin1 = mock(PluginDeclaration.class);
         when(plugin1.getId()).thenReturn("org.cthing.plugin1");
@@ -210,7 +211,7 @@ public class CThingPublishingExtensionTest {
         final PluginDeclaration plugin3 = mock(PluginDeclaration.class);
         when(plugin3.getId()).thenReturn("org.foobar.plugin3");
 
-        final NamedDomainObjectContainer<PluginDeclaration> plugins = mock(NamedDomainObjectContainer.class);
+        final NamedDomainObjectContainer<@NonNull PluginDeclaration> plugins = mock(NamedDomainObjectContainer.class);
         when(plugins.stream()).thenReturn(Stream.of(plugin1, plugin2, plugin3));
 
         final GradlePluginDevelopmentExtension pluginExt = mock(GradlePluginDevelopmentExtension.class);

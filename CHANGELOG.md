@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Site URL has been removed because C Thing Software project no longer generate
   a project site.
 
+### Fixed
+
+- Calling `CThingPublishingExtension.createPomAction()` no longer causes a configuration
+  mutation error when using Gradle 9.0.0 or newer.
+
 ## [2.0.0] - 2025-02-18
 
 ### Added

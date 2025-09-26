@@ -176,14 +176,18 @@ public class CThingPomAction implements Action<MavenPom> {
             mavenPom.getProperties().put("cthing.build.number", projectVersion.getBuildNumber());
         }
 
-        final Set<String> dependencies = this.findCThingDependencies.get();
-        if (!dependencies.isEmpty()) {
-            mavenPom.getProperties().put("cthing.dependencies", String.join(" ", dependencies));
-        }
+        // To avoid configuration mutation errors, defer finding dependencies until after the
+        // project has been evaluated.
+        this.project.afterEvaluate(p -> {
+            final Set<String> dependencies = this.findCThingDependencies.get();
+            if (!dependencies.isEmpty()) {
+                mavenPom.getProperties().put("cthing.dependencies", String.join(" ", dependencies));
+            }
 
-        final Set<String> plugins = this.findCThingGradlePlugins.get();
-        if (!plugins.isEmpty()) {
-            mavenPom.getProperties().put("cthing.gradle.plugins", String.join(" ", plugins));
-        }
+            final Set<String> plugins = this.findCThingGradlePlugins.get();
+            if (!plugins.isEmpty()) {
+                mavenPom.getProperties().put("cthing.gradle.plugins", String.join(" ", plugins));
+            }
+        });
     }
 }

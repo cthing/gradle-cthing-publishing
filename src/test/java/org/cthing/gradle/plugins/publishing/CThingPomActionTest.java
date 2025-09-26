@@ -34,21 +34,25 @@ import org.gradle.api.publish.maven.MavenPomMailingListSpec;
 import org.gradle.api.publish.maven.MavenPomOrganization;
 import org.gradle.api.publish.maven.MavenPomScm;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 
 public class CThingPomActionTest {
 
     private static class TestOrganization implements MavenPomOrganization {
 
-        private final Property<String> name;
-        private final Property<String> url;
+        private final Property<@NonNull String> name;
+        private final Property<@NonNull String> url;
 
         TestOrganization(final Project project) {
             this.name = project.getObjects().property(String.class);
@@ -56,22 +60,22 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getName() {
+        public Property<@NonNull String> getName() {
             return this.name;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
     }
 
     private static class TestLicense implements MavenPomLicense {
 
-        private final Property<String> name;
-        private final Property<String> url;
-        private final Property<String> distribution;
-        private final Property<String> comments;
+        private final Property<@NonNull String> name;
+        private final Property<@NonNull String> url;
+        private final Property<@NonNull String> distribution;
+        private final Property<@NonNull String> comments;
 
         TestLicense(final Project project) {
             this.name = project.getObjects().property(String.class);
@@ -81,22 +85,22 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getName() {
+        public Property<@NonNull String> getName() {
             return this.name;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
 
         @Override
-        public Property<String> getDistribution() {
+        public Property<@NonNull String> getDistribution() {
             return this.distribution;
         }
 
         @Override
-        public Property<String> getComments() {
+        public Property<@NonNull String> getComments() {
             return this.comments;
         }
     }
@@ -122,15 +126,15 @@ public class CThingPomActionTest {
 
     private static class TestDeveloper implements MavenPomDeveloper {
 
-        private final Property<String> id;
-        private final Property<String> name;
-        private final Property<String> email;
-        private final Property<String> url;
-        private final Property<String> organization;
-        private final Property<String> organizationUrl;
-        private final SetProperty<String> roles;
-        private final Property<String> timezone;
-        private final MapProperty<String, String> properties;
+        private final Property<@NonNull String> id;
+        private final Property<@NonNull String> name;
+        private final Property<@NonNull String> email;
+        private final Property<@NonNull String> url;
+        private final Property<@NonNull String> organization;
+        private final Property<@NonNull String> organizationUrl;
+        private final SetProperty<@NonNull String> roles;
+        private final Property<@NonNull String> timezone;
+        private final MapProperty<@NonNull String, @NonNull String> properties;
 
         TestDeveloper(final Project project) {
             this.id = project.getObjects().property(String.class);
@@ -145,47 +149,47 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getId() {
+        public Property<@NonNull String> getId() {
             return this.id;
         }
 
         @Override
-        public Property<String> getName() {
+        public Property<@NonNull String> getName() {
             return this.name;
         }
 
         @Override
-        public Property<String> getEmail() {
+        public Property<@NonNull String> getEmail() {
             return this.email;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
 
         @Override
-        public Property<String> getOrganization() {
+        public Property<@NonNull String> getOrganization() {
             return this.organization;
         }
 
         @Override
-        public Property<String> getOrganizationUrl() {
+        public Property<@NonNull String> getOrganizationUrl() {
             return this.organizationUrl;
         }
 
         @Override
-        public SetProperty<String> getRoles() {
+        public SetProperty<@NonNull String> getRoles() {
             return this.roles;
         }
 
         @Override
-        public Property<String> getTimezone() {
+        public Property<@NonNull String> getTimezone() {
             return this.timezone;
         }
 
         @Override
-        public MapProperty<String, String> getProperties() {
+        public MapProperty<@NonNull String, @NonNull String> getProperties() {
             return this.properties;
         }
     }
@@ -211,10 +215,10 @@ public class CThingPomActionTest {
 
     private static class TestScm implements MavenPomScm {
 
-        private final Property<String> connection;
-        private final Property<String> developerConnection;
-        private final Property<String> url;
-        private final Property<String> tag;
+        private final Property<@NonNull String> connection;
+        private final Property<@NonNull String> developerConnection;
+        private final Property<@NonNull String> url;
+        private final Property<@NonNull String> tag;
 
         TestScm(final Project project) {
             this.connection = project.getObjects().property(String.class);
@@ -224,30 +228,30 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getConnection() {
+        public Property<@NonNull String> getConnection() {
             return this.connection;
         }
 
         @Override
-        public Property<String> getDeveloperConnection() {
+        public Property<@NonNull String> getDeveloperConnection() {
             return this.developerConnection;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
 
         @Override
-        public Property<String> getTag() {
+        public Property<@NonNull String> getTag() {
             return this.tag;
         }
     }
 
     private static class TestIssueManagement implements MavenPomIssueManagement {
 
-        private final Property<String> system;
-        private final Property<String> url;
+        private final Property<@NonNull String> system;
+        private final Property<@NonNull String> url;
 
         TestIssueManagement(final Project project) {
             this.system = project.getObjects().property(String.class);
@@ -255,20 +259,20 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getSystem() {
+        public Property<@NonNull String> getSystem() {
             return this.system;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
     }
 
     private static class TestCIManagement implements MavenPomCiManagement {
 
-        private final Property<String> system;
-        private final Property<String> url;
+        private final Property<@NonNull String> system;
+        private final Property<@NonNull String> url;
 
         TestCIManagement(final Project project) {
             this.system = project.getObjects().property(String.class);
@@ -276,12 +280,12 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getSystem() {
+        public Property<@NonNull String> getSystem() {
             return this.system;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
     }
@@ -295,11 +299,11 @@ public class CThingPomActionTest {
         final TestIssueManagement issueManagement;
         final TestCIManagement ciManagement;
 
-        private final Property<String> name;
-        private final Property<String> description;
-        private final Property<String> url;
-        private final Property<String> inceptionYear;
-        private final MapProperty<String, String> properties;
+        private final Property<@NonNull String> name;
+        private final Property<@NonNull String> description;
+        private final Property<@NonNull String> url;
+        private final Property<@NonNull String> inceptionYear;
+        private final MapProperty<@NonNull String, @NonNull String> properties;
 
         TestPom(final Project project) {
             this.name = project.getObjects().property(String.class);
@@ -326,22 +330,22 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public Property<String> getName() {
+        public Property<@NonNull String> getName() {
             return this.name;
         }
 
         @Override
-        public Property<String> getDescription() {
+        public Property<@NonNull String> getDescription() {
             return this.description;
         }
 
         @Override
-        public Property<String> getUrl() {
+        public Property<@NonNull String> getUrl() {
             return this.url;
         }
 
         @Override
-        public Property<String> getInceptionYear() {
+        public Property<@NonNull String> getInceptionYear() {
             return this.inceptionYear;
         }
 
@@ -391,7 +395,7 @@ public class CThingPomActionTest {
         }
 
         @Override
-        public MapProperty<String, String> getProperties() {
+        public MapProperty<@NonNull String, @NonNull String> getProperties() {
             return this.properties;
         }
 
@@ -406,7 +410,7 @@ public class CThingPomActionTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        this.project = ProjectBuilder.builder().build();
+        this.project = spy(ProjectBuilder.builder().build());
         this.extension = mock(CThingPublishingExtension.class);
 
         final Path projectDir = this.project.getProjectDir().toPath();
@@ -604,12 +608,13 @@ public class CThingPomActionTest {
     public void testWithPlugins() {
         final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
                                                            this.extension::findCThingGradlePlugins);
-
         final Set<String> plugins = new TreeSet<>();
         plugins.add("a");
         plugins.add("b");
         plugins.add("c");
+
         when(this.extension.findCThingGradlePlugins()).thenReturn(plugins);
+        executeAfterEvaluate();
 
         final TestPom pom = new TestPom(this.project);
         action.execute(pom);
@@ -621,16 +626,26 @@ public class CThingPomActionTest {
     public void testWithDependencies() {
         final CThingPomAction action = new CThingPomAction(this.project, this.extension::findCThingDependencies,
                                                            this.extension::findCThingGradlePlugins);
-
         final Set<String> dependencies = new TreeSet<>();
         dependencies.add("a");
         dependencies.add("b");
         dependencies.add("c");
+
         when(this.extension.findCThingDependencies()).thenReturn(dependencies);
+        executeAfterEvaluate();
 
         final TestPom pom = new TestPom(this.project);
         action.execute(pom);
 
         assertThat(pom.getProperties().getOrNull()).containsEntry("cthing.dependencies", "a b c");
+    }
+
+    @SuppressWarnings("unchecked")
+    private void executeAfterEvaluate() {
+        doAnswer(invocation -> {
+            final Action<@NonNull Project> a = invocation.getArgument(0);
+            a.execute(this.project);
+            return null;
+        }).when(this.project).afterEvaluate(any(Action.class));
     }
 }
