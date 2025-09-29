@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PublishingPluginApplyTest {
 
     @Test
-    @SuppressWarnings("DataFlowIssue")
     public void testApply() {
         final Project project = ProjectBuilder.builder().withName("testProject").build();
         project.getPluginManager().apply("org.cthing.cthing-publishing");
